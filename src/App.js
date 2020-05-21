@@ -19,6 +19,9 @@ function App() {
 
   return (
     <div className="container mx-auto">
+      <div className="text-center text-5xl my-2 italic gray">
+        Image Gallery
+    </div>
       <ImageSearch textSearch={(text) => setTerm(text)} />
       {!isLoading && images.length === 0 && <h1 className="text-center text-6xl mx-auto mt-32">No Images Found</h1>}
       {isLoading ? <Skeleton color="#202020" highlightColor="#444" count={5} />
