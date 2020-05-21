@@ -1,24 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
+import React, { useState, useEffect } from 'react';
+import ImageCard from './components/ImageCard';
+import Skeleton from 'react-loading-skeleton';
+import ImageSearch from './components/ImageSearch';
 function App() {
+  const [images, setImages] = useState([]);
+  const [isLoading, setisLoading] = useState(true);
+  const [term, setTerm] = useState('');
+
+  useEffect(() => {
+    fetch(`https://pixabay.com/api/?key=${process.env.REACT_APP_PIXABAYAPI_KEY}&q=${term}&image_type=photo&pretty=true`)
+      .then(response => response.json())
+      .then(data => {
+        setImages(data.hits);
+        setisLoading(false);
+      })
+      .catch(error => console.log(error))
+  }, [term]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container mx-auto">
+      <ImageSearch textSearch={(text) => setTerm(text)} />
+      {!isLoading && images.length === 0 && <h1 className="text-center text-6xl mx-auto mt-32">No Images Found</h1>}
+      {isLoading ? <Skeleton color="#202020" highlightColor="#444" count={5} />
+        : <div className="grid grid-cols-3 gap-4">
+          {images.map(image => (
+            <ImageCard key={image.id} image={image} />
+          ))}
+        </div>}
     </div>
   );
 }
